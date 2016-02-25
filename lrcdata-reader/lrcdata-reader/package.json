@@ -1,0 +1,10 @@
+{
+  "name": "lrcdata-reader",
+  "version": "0.0.0",
+  "description": "lrcdata-reader",
+  "main": "test.js",
+  "author": {
+    "name": "Monster",
+    "email": ""
+  }
+}
