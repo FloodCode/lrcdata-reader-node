@@ -1,7 +1,10 @@
-﻿var fs = require('fs');
+"use strict";
+
+var fs = require('fs');
 var lrcdataReader = require('./lrcdata-reader.js');
 
 fs.open('lrcdata.bin', 'r', function (status, fd) {
+    
     if (status) {
         console.log(status.message);
         return;
@@ -11,5 +14,11 @@ fs.open('lrcdata.bin', 'r', function (status, fd) {
     var buffer = new Buffer(stats['size']);
     fs.read(fd, buffer, 0, stats['size'], 0);
     var lrcdata = lrcdataReader.read(buffer);
-    console.log(lrcdata);    
+    
+    if (lrcdata.ok) {
+        console.log('File is ok');
+    } else {
+        console.log('File is damaged');
+    }
+    
 });

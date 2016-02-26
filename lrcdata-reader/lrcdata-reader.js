@@ -1,4 +1,6 @@
-﻿function readLRCData(buffer) {
+﻿"use strict";
+
+function readLRCData(buffer) {
     var header = readHeader(buffer);
     if (header == null) {
         // Cannot read header
@@ -152,7 +154,7 @@ function readWNDInfo(buffer, offset) {
 function readString(buffer, offset) {
     var length = buffer.readUInt32BE(offset);
     
-    result = {};
+    var result = {};
     result.data = buffer.toString(offset + 4, offset + 4 + length);
     result.offset = offset + 4 + length;
     return result;
