@@ -1,6 +1,4 @@
-﻿"use strict";
-
-function readLRCData(buffer) {
+﻿function readLRCData(buffer) {
     var header = readHeader(buffer);
     if (header == null) {
         // Cannot read header
@@ -78,7 +76,7 @@ function readKeyboard(buffer) {
     var offset = 0x0;
     var count = buffer.readUInt32BE(offset);
     offset += 4;
-
+    
     var items = [];
     for (var i = 0; i < count; i++) {
         var kbdInfo = {};
@@ -106,7 +104,7 @@ function readKeyboard(buffer) {
         
         items.push(kbdInfo);
     }
-
+    
     return { count: count, items: items };
 }
 
@@ -114,18 +112,16 @@ function readClipboard(buffer) {
     var offset = 0x0;
     var count = buffer.readUInt32BE(offset);
     offset += 4;
-
+    
     var items = [];
     for (var i = 0; i < count; i++) {
-        var time = buffer.readUInt32BE(offset);
-        offset += 4;
         var wndInfo = readWNDInfo(buffer, offset);
         offset = wndInfo.offset;
         var data = readString(buffer, offset);
         offset = data.offset;
-        items.push( { time: time, wndInfo: wndInfo.data, data: data.data } );
+        items.push({ time: time, wndInfo: wndInfo.data, data: data.data });
     }
-
+    
     return { count: count, items: items };
 }
 
@@ -140,11 +136,12 @@ function readVKInfo(buffer, offset) {
 }
 
 function readWNDInfo(buffer, offset) {
-    var process = readString(buffer, offset);
+    var process = readString(buffer, offset + 4);
     var title = readString(buffer, process.offset);
     
     var wndInfo = {};
     wndInfo.data = {};
+    wndInfo.data.time = buffer.readUInt32BE(offset);
     wndInfo.data.process = process.data;
     wndInfo.data.title = title.data;
     wndInfo.offset = title.offset;
@@ -154,8 +151,8 @@ function readWNDInfo(buffer, offset) {
 function readString(buffer, offset) {
     var length = buffer.readUInt32BE(offset);
     
-    var result = {};
-    result.data = buffer.toString(offset + 4, offset + 4 + length);
+    result = {};
+    result.data = buffer.toString('utf8', offset + 4, offset + 4 + length);
     result.offset = offset + 4 + length;
     return result;
 }
