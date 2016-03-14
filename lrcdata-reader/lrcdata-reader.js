@@ -5,13 +5,13 @@
         // LRCData file is damaged
         return { ok: false, message: 'Unable to read LRCData header' };
     }
-    
+
     var result = {};
     result.ok = true;
     result.id = header.id;
     result.type = header.type;
     result.data = null;
-    
+
     try {
         var rawData = new Buffer(header.length);
         buffer.copy(rawData, 0, 0x0048, buffer.length);
@@ -36,11 +36,11 @@
     } catch (ex) {
         return { ok: false, message: 'Exception: ' + ex.message };
     }
-    
+
     if (result.data == null) {
         return { ok: false, message: 'Can\'t parse data' };
     }
-    
+
     return result;
 }
 
@@ -49,7 +49,7 @@ function readHeader(buffer) {
     if (buffer.length < 0x0048) {
         return null;
     }
-    
+
     // Read header values
     var result = {};
     result.signature = buffer.readUInt16BE(0x0000);
@@ -57,12 +57,12 @@ function readHeader(buffer) {
     result.id = buffer.toString('ascii', 0x0003, 0x0043);
     result.type = buffer.readInt8(0x0043);
     result.length = buffer.readUInt32BE(0x0044);
-    
+
     // If length of data block is wrong
     if (buffer.length - 0x0048 != result.length) {
         return null;
     }
-    
+
     return result;
 }
 
@@ -76,14 +76,14 @@ function readKeyboardData(buffer) {
     var offset = 0x0;
     var count = buffer.readUInt32BE(offset);
     offset += 4;
-    
+
     var items = [];
     for (var i = 0; i < count; i++) {
         var kbd = readKeyboard(buffer, offset);
         offset = kbd.offset;
         items.push(kbd.data);
     }
-    
+
     return { count: count, items: items };
 }
 
@@ -91,7 +91,7 @@ function readClipboardData(buffer) {
     var offset = 0x0;
     var count = buffer.readUInt32BE(offset);
     offset += 4;
-    
+
     var items = [];
     for (var i = 0; i < count; i++) {
         var wndInfo = readWNDInfo(buffer, offset);
@@ -100,7 +100,7 @@ function readClipboardData(buffer) {
         offset = data.offset;
         items.push({ wndInfo: wndInfo.data, data: data.data });
     }
-    
+
     return { count: count, items: items };
 }
 
@@ -118,7 +118,7 @@ function readKeyboard(buffer, offset) {
     for (var i = 0; i < count; i++) {
         var vkInfo = readVKInfo(buffer, offset);
         offset = vkInfo.offset;
-        keyboard.data.keys.push(vkInfo);
+        keyboard.data.keys.push(vkInfo.data);
     }
 
     keyboard.offset = offset;
@@ -139,7 +139,7 @@ function readWNDInfo(buffer, offset) {
     var time = buffer.readUInt32BE(offset);
     var process = readString(buffer, offset + 4);
     var title = readString(buffer, process.offset);
-    
+
     var wndInfo = {};
     wndInfo.data = {};
     wndInfo.data.time = time;
@@ -151,8 +151,12 @@ function readWNDInfo(buffer, offset) {
 
 function readString(buffer, offset) {
     var length = buffer.readUInt32BE(offset);
+<<<<<<< HEAD
     offset += 4;
     
+=======
+
+>>>>>>> origin/master
     result = {};
     result.data = buffer.toString('utf8', offset, offset + length);
     result.offset = offset + length;
@@ -162,3 +166,4 @@ function readString(buffer, offset) {
 module.exports.read = function (buffer) {
     return readLRCData(buffer);
 }
+
