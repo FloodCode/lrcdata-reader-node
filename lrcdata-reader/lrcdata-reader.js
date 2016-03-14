@@ -151,12 +151,8 @@ function readWNDInfo(buffer, offset) {
 
 function readString(buffer, offset) {
     var length = buffer.readUInt32BE(offset);
-<<<<<<< HEAD
     offset += 4;
     
-=======
-
->>>>>>> origin/master
     result = {};
     result.data = buffer.toString('utf8', offset, offset + length);
     result.offset = offset + length;
